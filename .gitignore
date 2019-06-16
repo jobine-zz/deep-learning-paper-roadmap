@@ -106,5 +106,8 @@ venv.bak/
 # vscode
 .vscode/
 
+#pycharm
+.idea/
+
 # data
 pdfs/

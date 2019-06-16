@@ -1,5 +1,6 @@
 import os
 import re
+import socket
 import urllib.request
 import shutil
 import argparse
@@ -30,6 +31,7 @@ def download_file(link, location, name):
         print('Fail to download:\n' + e.message)
         raise
 
+
 def download_pdf(link, location, name):
     try:
         response = urllib.request.urlopen(link, timeout=500)
@@ -44,6 +46,7 @@ def download_pdf(link, location, name):
     except Exception as e:
         print('Fail to download:\n' + e.message)
 
+
 def clean_pdf_link(link):
     if 'arxiv' in link:
         link = link.replace('abs', 'pdf')   
@@ -51,13 +54,16 @@ def clean_pdf_link(link):
             link = '.'.join((link, 'pdf'))
     return link
 
+
 def clean_text(text, replacements = {' ': '_', '/': '_', '.': '', '"': '', ':': '_', '\\': '_', '*': '_', '?': '_', '<': '_', '>':'_'}):
     for key, rep in replacements.items():
         text = text.replace(key, rep)
-    return text    
+    return text
+
 
 def print_title(title, pattern = "-"):
     print('\n'.join(("", title, pattern * len(title)))) 
+
 
 def get_extension(link):
     extension = os.path.splitext(link)[1][1:]
@@ -65,7 +71,8 @@ def get_extension(link):
         return extension
     if 'pdf' in extension:
         return 'pdf'    
-    return 'pdf'    
+    return 'pdf'
+
 
 def shorten_title(title):
     m1 = re.search('[[0-9]*]', title)
@@ -119,9 +126,9 @@ if __name__ == '__main__':
                     if not ext in forbidden_extensions:
                         print(shorten_title(point.text) + ' (' + link + ')')
                         try:
-                            name = clean_text(point.text.split('[' + ext + ']')[0])
+                            name = clean_text(point.text.split('[' + ext + ']')[0])[:(253 - len(ext))]
                             fullname = '.'.join((name, ext))
-                            if not os.path.exists('/'.join((current_directory, fullname)) ):
+                            if not os.path.exists('/'.join((current_directory, fullname))):
                                 download_file(link, current_directory, '.'.join((name, ext)))
                         except:
                             failures.append(point.text)
